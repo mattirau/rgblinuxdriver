@@ -14,6 +14,10 @@
 //#include <sys/mman.h>
 //#include <unistd.h>
 
+#undef PAGE_SIZE
+#define PAGE_SIZE (4*1024)
+
+#undef BLOCK_SIZE
 #define BLOCK_SIZE (4*1024)
 
 #define BCM2708_PERI_BASE        0x3F000000
