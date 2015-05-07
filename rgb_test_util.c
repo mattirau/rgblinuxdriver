@@ -17,9 +17,11 @@ int main(int argc, char *argv[]) {
 
     // Read commands until failure
     while (1) {
-        scanf(" %c", in);
+        scanf("%c", &in);
         getchar();
 
+        printf("Read '%c'\n",in);
+        
         if (in == ' ') {
             break;
         } else {

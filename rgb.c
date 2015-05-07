@@ -27,6 +27,8 @@ static struct gpio leds[] = {
     { 9, GPIOF_OUT_INIT_HIGH, "LED B"}
 };
 
+int led_status[ARRAY_SIZE(leds)] = {0};
+
 static int rgb_major = 60; // Major number
 
 void setup_io(void);
@@ -61,7 +63,7 @@ int rgb_init(void) {
 
     // turn all LEDs off
     for (i = 0; i < ARRAY_SIZE(leds); i++) {
-        gpio_set_value(leds[i].gpio, 1);
+        gpio_set_value(leds[i].gpio, 0);
     }
 
     printk("[RGB] Inserting rgb module\n");
@@ -96,16 +98,38 @@ int rgb_open(struct inode *inode, struct file * filp) {
 }
 
 ssize_t rgb_write(struct file *filp, const char *buf, size_t count, loff_t * f_pos) {
-    int i;
+    int led = 0;
+    int valid = 1;
 
-    // turn all LEDs off
-    for (i = 0; i < ARRAY_SIZE(leds); i++) {
-        gpio_set_value(leds[i].gpio, toggle);
+    printk("[RGB] Data received '%s'\n", buf);
+
+    switch (buf[0]) {
+        case 'r':
+        case '1':
+            led = 0;
+            break;
+        case 'g':
+        case '2':
+            led = 1;
+            break;
+        case 'b':
+        case '3':
+            led = 2;
+            break;
+        default:
+            valid = 0;
+            break;
     }
 
-    toggle = !toggle;
+    if (valid) {
+        printk("[RGB] Led %d set %s\n", led, (led_status[led]) ? "On" : "Off");
 
-    printk("[RGB] Data written\n");
+        led_status[led] = !led_status[led];
+        gpio_set_value(leds[led].gpio, led_status[led]);
+    } else {
+        printk("[RGB] Data invalid\n");
+    }
+
     return 0;
 }
 
