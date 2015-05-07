@@ -15,8 +15,6 @@
  
  */
 
-int toggle = 0;
-
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Matti Raudasoja");
 MODULE_DESCRIPTION("Simple RGB led driver");
